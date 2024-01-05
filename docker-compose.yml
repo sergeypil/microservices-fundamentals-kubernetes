@@ -1,0 +1,58 @@
+version: '3.7'
+networks:
+  my_network:
+    external: true
+services:
+  resource-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+    volumes:
+      - ./resource-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+  song-db:
+    image: postgres
+    ports:
+      - "15999:5432"
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: song-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
+    volumes:
+      - ./song-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+  resource-service:
+    build: ./resource-service
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - resource-db
+      - discovery-service
+  song-service:
+    build: ./song-service
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: song-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - song-db
+      - discovery-service
+  discovery-service:
+    build: ./discovery-service
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
