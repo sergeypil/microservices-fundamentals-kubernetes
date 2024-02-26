@@ -1,18 +1,11 @@
-FROM gradle:7.5.1-jdk17 as build
+  # Start with a base image containing Java runtime
+FROM openjdk:17-jdk-alpine
 
-WORKDIR /home/gradle
+  # The application's jar file
+ARG JAR_FILE=build/libs/discovery-service-0.0.1-SNAPSHOT.jar
 
-COPY --chown=gradle:gradle . .
+  # Add the application's jar to the container
+COPY ${JAR_FILE} app.jar
 
-RUN gradle clean build
-
-
-FROM openjdk:17-jdk-alpine as runtime
-
-COPY --from=build /home/gradle/build/libs/*.jar app.jar
-
+  # Run the jar file
 ENTRYPOINT ["java","-jar","/app.jar"]
-
-RUN mkdir -p /app && (cd /app; jar -xf /app.jar)
-
-ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.discoveryservice.DiscoveryServiceApplication"]

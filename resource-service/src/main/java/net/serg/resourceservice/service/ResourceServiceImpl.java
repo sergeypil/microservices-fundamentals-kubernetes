@@ -1,6 +1,8 @@
 package net.serg.resourceservice.service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.serg.resourceservice.dto.SongMetadataDto;
@@ -82,5 +84,12 @@ public class ResourceServiceImpl implements ResourceService {
     @Transactional
     public void deleteAudio(Set<Long> ids) {
         resourceRepository.deleteAllById(ids);
+        songServiceClient.deleteMetadataByResourceId(convertSetToCommaSeparatedString(ids));
+    }
+
+    private String convertSetToCommaSeparatedString(Set<Long> ids) {
+        return ids.stream()
+                  .map(String::valueOf)
+                  .collect(Collectors.joining(","));
     }
 }

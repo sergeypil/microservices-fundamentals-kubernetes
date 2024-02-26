@@ -1,4 +1,4 @@
-FROM gradle:7.5.1-jdk17 as build
+FROM gradle:7.4.0-jdk17 as build
 
 WORKDIR /home/gradle
 
@@ -11,6 +11,5 @@ FROM openjdk:17-jdk-alpine as runtime
 
 COPY --from=build /home/gradle/build/libs/*.jar app.jar
 
-RUN mkdir -p /app && (cd /app; jar -xf /app.jar)
+ENTRYPOINT ["java","-jar","/app.jar"]
 
-ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.SongServiceApplication"]

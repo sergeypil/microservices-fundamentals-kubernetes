@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface SongService {
 
     @Transactional(readOnly = true)
-    SongMetadata getSongMetadata(long id);
+    SongMetadata getSongMetadataByResourceId(long id);
 
     @Transactional
     Long saveSongMetadata(SongMetadata songMetadata);

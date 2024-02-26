@@ -13,7 +13,6 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-#      POSTGRES_HOST_AUTH_METHOD: 'trust'
     volumes:
       - ./resource-service/init.sql:/docker-entrypoint-initdb.d/init.sql
   song-db:
@@ -26,18 +25,33 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-#      POSTGRES_HOST_AUTH_METHOD: 'trust'
     volumes:
       - ./song-service/init.sql:/docker-entrypoint-initdb.d/init.sql
   resource-service:
     build: ./resource-service
-#    volumes:
-#      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
     networks:
       - ${GLOBAL_NETWORK}
     container_name: resource-service
     ports:
       - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+    depends_on:
+      - resource-db
+      - discovery-service
+  resource-service-2:
+    build: ./resource-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-service-2
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
     depends_on:
       - resource-db
       - discovery-service
@@ -50,6 +64,22 @@ services:
     container_name: song-service
     ports:
       - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+    depends_on:
+      - song-db
+      - discovery-service
+  song-service-2:
+    build: ./song-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: song-service-2
+    ports:
+      - "8083:8083"
+    environment:
+      SERVER_PORT: 8083
     depends_on:
       - song-db
       - discovery-service

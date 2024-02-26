@@ -20,9 +20,9 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(readOnly = true)
-    public SongMetadata getSongMetadata(long id) {
-        var songMetadata = songRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Song Metadata with ID %d is not found", id)));
+    public SongMetadata getSongMetadataByResourceId(long resourceId) {
+        var songMetadata = songRepository.findByResourceId(resourceId)
+            .orElseThrow(() -> new ResourceNotFoundException(String.format("Song Metadata for resource with ID %d is not found", resourceId)));
         return songMetadata;
     }
 
@@ -37,6 +37,6 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public void deleteSongMetadata(Set<Long> ids) {
-        songRepository.deleteAllById(ids);
+        songRepository.deleteByResourceIdIn(ids);
     }
 }
