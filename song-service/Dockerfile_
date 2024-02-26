@@ -12,3 +12,4 @@ FROM openjdk:17-jdk-alpine as runtime
 COPY --from=build /home/gradle/build/libs/*.jar app.jar
 
 ENTRYPOINT ["java","-jar","/app.jar"]
+

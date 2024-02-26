@@ -13,7 +13,7 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: 'trust'
+#      POSTGRES_HOST_AUTH_METHOD: 'trust'
     volumes:
       - ./resource-service/init.sql:/docker-entrypoint-initdb.d/init.sql
   song-db:
@@ -26,11 +26,13 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST_AUTH_METHOD: 'trust'
+#      POSTGRES_HOST_AUTH_METHOD: 'trust'
     volumes:
       - ./song-service/init.sql:/docker-entrypoint-initdb.d/init.sql
   resource-service:
     build: ./resource-service
+#    volumes:
+#      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
     networks:
       - ${GLOBAL_NETWORK}
     container_name: resource-service
@@ -41,6 +43,8 @@ services:
       - discovery-service
   song-service:
     build: ./song-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
     networks:
       - ${GLOBAL_NETWORK}
     container_name: song-service
@@ -51,6 +55,8 @@ services:
       - discovery-service
   discovery-service:
     build: ./discovery-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
     networks:
       - ${GLOBAL_NETWORK}
     container_name: discovery-service
