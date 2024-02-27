@@ -12,3 +12,8 @@ spring:
       ddl-auto: update
   application:
     name: song-service
+eureka:
+  client:
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

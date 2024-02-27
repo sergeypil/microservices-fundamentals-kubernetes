@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 spring:
   datasource:
     driver-class-name: "org.postgresql.Driver"
-    url: jdbc:postgresql://localhost:5432/audio
+    url: jdbc:postgresql://resource-db:5432/audio
     username: postgres
     password: postgres
   jpa:
@@ -17,4 +17,10 @@ spring:
 
 clients:
   song-service:
-    url: http://localhost:8081/songs
+    url: http://song-service/songs
+
+eureka:
+  client:
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka
