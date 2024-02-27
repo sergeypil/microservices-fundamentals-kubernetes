@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: songs-ingress
+  namespace: songs
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/resource-service"
+            backend:
+              service:
+                name: resource-service
+                port:
+                  number: 8080
+          - pathType: Prefix
+            path: "/song-service"
+            backend:
+              service:
+                name: song-service
+                port:
+                  number: 8081

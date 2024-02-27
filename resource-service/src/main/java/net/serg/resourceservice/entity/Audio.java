@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class Audio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Basic
+    @Lob
     @Column(name = "audio_data")
     private byte[] audioData;
 

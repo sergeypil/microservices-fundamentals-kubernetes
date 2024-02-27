@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-service
+  namespace: songs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: resource-service
+  template:
+    metadata:
+      labels:
+        app: resource-service
+    spec:
+      containers:
+        - name: resource-service
+          image: resource-service-image:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+          volumeMounts:
+            - name: volume
+              mountPath: "/app/data"
+      volumes:
+        - name: volume
+          persistentVolumeClaim:
+            claimName: resource-pvc

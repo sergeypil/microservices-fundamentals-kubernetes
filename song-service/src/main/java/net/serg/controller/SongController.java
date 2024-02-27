@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.serg.dto.IdResponse;
 import net.serg.dto.SongMetadataDto;
 import net.serg.entity.SongMetadata;
@@ -21,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(path = "/songs")
 @RequiredArgsConstructor
+@Slf4j
 public class SongController {
 
     private final SongService songService;
 
     @PostMapping
     public ResponseEntity<IdResponse> saveSongMetadata(@RequestBody SongMetadataDto songMetadataDto) {
+        log.info("Calling song-service to save metadata");
         var songMetadata = songMetadataDtoToSongMetadata(songMetadataDto);
         var id = songService.saveSongMetadata(songMetadata);
         var response = new IdResponse(id);
@@ -42,6 +45,7 @@ public class SongController {
 
     @DeleteMapping
     public ResponseEntity<Set<Long>> deleteSongMetadata(@RequestParam(name = "id") String idsSeparatedByComma) {
+        log.info("Calling song-service to delete metadata");
         var ids = Arrays.stream(idsSeparatedByComma.split(","))
             .map(String::trim)
             .map(Long::valueOf)

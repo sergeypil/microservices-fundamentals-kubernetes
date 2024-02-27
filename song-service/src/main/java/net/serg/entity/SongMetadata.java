@@ -38,6 +38,6 @@ public class SongMetadata {
     @Column(name = "resouce_id")
     private Long resourceId;
 
-    @Column(name = "year")
+    @Column(name = "song_year")
     private String year;
 }

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: song-db
+  namespace: songs
+spec:
+  serviceName: "song-db-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: song-db
+  template:
+    metadata:
+      labels:
+        app: song-db
+    spec:
+      containers:
+        - name: song-db-container
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_PASSWORD
+              value: postgres
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "local-path"
+        resources:
+          requests:
+            storage: 1Gi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: song-db-service
+  namespace: songs
+spec:
+  selector:
+    app: song-db
+  ports:
+    - protocol: TCP
+      port: 5432
+  clusterIP: None

@@ -1,6 +1,7 @@
 package net.serg.resourceservice.service.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.serg.resourceservice.dto.SongMetadataDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -13,6 +14,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SongMetadataClientImpl implements SongServiceClient{
 
     private final RestTemplate restTemplate;
@@ -22,13 +24,14 @@ public class SongMetadataClientImpl implements SongServiceClient{
 
     @Override
     public void saveMetadata(SongMetadataDto songMetadataDto) {
+        log.info("Calling song-service to save metadata");
         var httpEntity = new HttpEntity<>(songMetadataDto);
         restTemplate.postForEntity(url, httpEntity, SongMetadataDto.class);
     }
 
     @Override
     public void deleteMetadataByResourceId(String idsSeparatedByComma) {
-        
+        log.info("Calling song-service to delete metadata");
         String deleteUrl = url + "?id=" + idsSeparatedByComma;
         restTemplate.exchange(deleteUrl, HttpMethod.DELETE, null, Set.class);
     }

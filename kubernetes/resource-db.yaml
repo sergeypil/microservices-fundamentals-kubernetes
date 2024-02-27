@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: resource-db
+  namespace: songs
+spec:
+  serviceName: "resource-db-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-db
+  template:
+    metadata:
+      labels:
+        app: resource-db
+    spec:
+      containers:
+        - name: resource-db-container
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_PASSWORD
+              value: postgres
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "local-path"
+        resources:
+          requests:
+            storage: 1Gi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: resource-db-service
+  namespace: songs
+spec:
+  selector:
+    app: resource-db
+  ports:
+    - protocol: TCP
+      port: 5432
+  clusterIP: None
