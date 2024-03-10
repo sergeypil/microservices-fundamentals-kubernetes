@@ -28,3 +28,23 @@ spec:
               configMapKeyRef:
                 name: song-configmap
                 key: spring.profiles.active
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081         
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 30

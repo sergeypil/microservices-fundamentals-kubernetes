@@ -35,6 +35,32 @@ spec:
                 secretKeyRef:
                   name: song-secret
                   key: password
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U 
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+          startupProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U 
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 30
       volumes:
         - name: sql-script-volume
           configMap:
