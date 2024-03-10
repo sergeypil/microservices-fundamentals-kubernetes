@@ -2,7 +2,7 @@
 FROM openjdk:17-jdk-alpine
 
   # The application's jar file
-ARG JAR_FILE=build/libs/song-service-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=build/libs/Song-service-0.0.1-SNAPSHOT.jar
 
   # Add the application's jar to the container
 COPY ${JAR_FILE} app.jar

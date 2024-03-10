@@ -22,14 +22,28 @@ spec:
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/postgresql/data
+            - name: sql-script-volume
+              mountPath: /docker-entrypoint-initdb.d
           env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: song-secret
+                  key: username
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: song-secret
+                  key: password
+      volumes:
+        - name: sql-script-volume
+          configMap:
+            name: song-db-configmap
   volumeClaimTemplates:
     - metadata:
         name: db-storage
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
             storage: 1Gi

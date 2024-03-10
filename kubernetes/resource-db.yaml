@@ -22,9 +22,23 @@ spec:
           volumeMounts:
             - name: db-storage
               mountPath: /var/lib/postgresql/data
+            - name: sql-script-volume
+              mountPath: /docker-entrypoint-initdb.d
           env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: resource-secret
+                  key: username
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: resource-secret
+                  key: password
+      volumes:
+        - name: sql-script-volume
+          configMap:
+            name: resource-db-configmap
   volumeClaimTemplates:
     - metadata:
         name: db-storage

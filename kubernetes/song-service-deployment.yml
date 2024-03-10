@@ -19,6 +19,12 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           - name: SERVER_PORT
-            value: "8081"
+            valueFrom:
+              configMapKeyRef:
+                name: song-configmap
+                key: server.port
           - name: SPRING_PROFILES_ACTIVE
-            value: k8s
+            valueFrom:
+              configMapKeyRef:
+                name: song-configmap
+                key: spring.profiles.active
