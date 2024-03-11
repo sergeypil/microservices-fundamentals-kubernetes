@@ -42,4 +42,7 @@ public class SongMetadata {
 
     @Column(name = "song_year")
     private String year;
+    
+    @Column(name = "genre")
+    private String genre;
 }

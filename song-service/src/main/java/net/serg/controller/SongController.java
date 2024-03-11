@@ -62,6 +62,7 @@ public class SongController {
             .length(songMetadataDto.length())
             .resourceId(songMetadataDto.resourceId())
             .year(songMetadataDto.year())
+            .genre(songMetadataDto.genre())
             .build();
     }
 
@@ -73,6 +74,7 @@ public class SongController {
             .length(songMetaData.getLength())
             .resourceId(songMetaData.getResourceId())
             .year(songMetaData.getYear())
+            .genre(songMetaData.getGenre())
             .build();
     }
 }

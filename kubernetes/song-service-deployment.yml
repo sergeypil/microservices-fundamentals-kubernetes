@@ -5,6 +5,11 @@ metadata:
   namespace: songs
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   selector:
     matchLabels:
       app: song-service
@@ -15,7 +20,7 @@ spec:
     spec:
       containers:
       - name: song-service
-        image: song-service-image:latest
+        image: northug/song-service-image:v2.0
         imagePullPolicy: IfNotPresent
         env:
           - name: SERVER_PORT
