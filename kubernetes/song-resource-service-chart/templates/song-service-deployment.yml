@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: song-service
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: song-service
+  template:
+    metadata:
+      labels:
+        app: song-service
+    spec:
+      containers:
+      - name: song-service
+        image: northug/song-service-image:v2.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: SERVER_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: song-configmap
+                key: server.port
+          - name: SPRING_PROFILES_ACTIVE
+            valueFrom:
+              configMapKeyRef:
+                name: song-configmap
+                key: spring.profiles.active
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081         
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 30

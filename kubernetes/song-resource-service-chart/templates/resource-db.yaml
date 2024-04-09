@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: resource-db
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: "resource-db-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-db
+  template:
+    metadata:
+      labels:
+        app: resource-db
+    spec:
+      containers:
+        - name: resource-db-container
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+            - name: sql-script-volume
+              mountPath: /docker-entrypoint-initdb.d
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: resource-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: resource-secret
+                  key: password
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U 
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+          startupProbe:
+            exec:
+              command:
+                - /usr/bin/pg_isready
+                - -U 
+                - $(POSTGRES_USER)
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 30
+      volumes:
+        - name: sql-script-volume
+          configMap:
+            name: resource-db-configmap
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: resource-db-service
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: resource-db
+  ports:
+    - protocol: TCP
+      port: 5432
+  clusterIP: None

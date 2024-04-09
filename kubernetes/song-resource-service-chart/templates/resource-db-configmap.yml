@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-db-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  init.sql: |
+    CREATE SEQUENCE audio_seq;
+    CREATE TABLE audio (
+      id bigint NOT NULL DEFAULT nextval('audio_seq'),
+      audio_data oid,
+      PRIMARY KEY (id)
+    );

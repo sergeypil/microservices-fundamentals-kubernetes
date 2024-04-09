@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: song-db-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  init.sql: | 
+    CREATE SEQUENCE song_metadata_seq;  
+    CREATE TABLE song_metadata (
+      id bigint NOT NULL DEFAULT nextval('song_metadata_seq'),
+      resource_id bigint NULL,
+      album varchar(255) NULL,
+      artist varchar(255) NULL,
+      length varchar(255) NULL,
+      "name" varchar(255) NULL,
+      "song_year" varchar(255) NULL,
+      PRIMARY KEY (id)
+    );

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-configmap
+  namespace: {{ .Values.namespace }}
+data:
+  server.port: "8080"
+  spring.profiles.active: "k8s"

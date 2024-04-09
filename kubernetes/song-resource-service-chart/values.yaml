@@ -1,0 +1,2 @@
+namespace: helm-songs
+replicaCount: 2
