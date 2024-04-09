@@ -3,6 +3,9 @@ kind: ConfigMap
 metadata:
   name: resource-db-configmap
   namespace: {{ .Values.namespace }}
+  labels:
+    date: {{ template "mychart.currentdate" . }}
+    version: {{ template "mychart.version" . }}
 data:
   init.sql: |
     CREATE SEQUENCE audio_seq;

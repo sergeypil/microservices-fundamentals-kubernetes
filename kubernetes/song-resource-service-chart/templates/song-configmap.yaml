@@ -3,6 +3,9 @@ kind: ConfigMap
 metadata:
   name: song-configmap
   namespace: {{ .Values.namespace }}
+  labels:
+    date: {{ template "mychart.currentdate" . }}
+    version: {{ template "mychart.version" . }}
 data:
   server.port: "8081"
   spring.profiles.active: "k8s"
