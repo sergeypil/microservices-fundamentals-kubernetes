@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resources-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /resources/$1
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "songs.net"
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            path: /(\d+)
+            backend:
+              service:
+                name: resource-service
+                port:
+                  number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resources-ingress-root
+  namespace: {{ .Values.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /resources
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "songs.net"
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            path: "/"
+            backend:
+              service:
+                name: resource-service
+                port:
+                  number: 8080
