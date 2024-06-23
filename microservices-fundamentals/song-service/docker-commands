@@ -1,0 +1,2 @@
+docker build -t song-service-image .
+docker run -p 8081:8081 song-service-image --name song-service-container

@@ -1,0 +1,20 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: "org.postgresql.Driver"
+    url: jdbc:postgresql://localhost:5432/audio
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    name: resource-service
+
+clients:
+  song-service:
+    url: http://localhost:8081/songs
