@@ -1,15 +1,14 @@
 package net.serg.resourceservice.service;
 
 import java.util.Set;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ResourceService {
+    
+    Long saveAudio(MultipartFile audioFile);
 
-    @Transactional
-    Long saveAudio(MultipartFile mp3File);
-
-    byte[] getAudio(long id);
-
+    byte[] getAudioByFilename(String fileName);
+    
+    String getAudioUrlById(Long id);
     void deleteAudio(Set<Long> ids);
 }

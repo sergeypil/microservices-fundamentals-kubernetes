@@ -1,23 +1,21 @@
 package net.serg.resourceservice.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.serg.resourceservice.dto.SongMetadataDto;
-import net.serg.resourceservice.entity.Audio;
+import net.serg.resourceservice.entity.AudioLocation;
 import net.serg.resourceservice.exception.ResourceNotFoundException;
 import net.serg.resourceservice.exception.ResourceServiceException;
 import net.serg.resourceservice.repository.ResourceRepository;
-import net.serg.resourceservice.service.client.SongServiceClient;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.mp3.LyricsHandler;
-import org.apache.tika.parser.mp3.Mp3Parser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -25,47 +23,27 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResourceServiceImpl implements ResourceService {
 
+    private final AmazonS3 amazonS3;
     private final ResourceRepository resourceRepository;
 
-    private final SongServiceClient songServiceClient;
-
-    @Override
-    @Transactional
-    public Long saveAudio(MultipartFile mp3File) {
+    public Long saveAudio(MultipartFile audioFile) {
         try {
-            var audio = resourceRepository.save(Audio.builder().audioData(mp3File.getBytes()).build());
+            InputStream inputStream = audioFile.getInputStream();
 
-            //detecting the file type
-            var handler = new BodyContentHandler();
-            var metadata = new Metadata();
-            var inputStream = mp3File.getInputStream();
-            var parseContext = new ParseContext();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(audioFile.getContentType());
+            metadata.setContentLength(audioFile.getSize());
 
-            //Mp3 parser
-            var mp3Parser = new Mp3Parser();
-            mp3Parser.parse(inputStream, handler, metadata, parseContext);
-            var lyrics = new LyricsHandler(inputStream, handler);
-
-            while (lyrics.hasLyrics()) {
-                log.debug(lyrics.toString());
+            if (!amazonS3.doesBucketExistV2("audiofiles")) {
+                amazonS3.createBucket("audiofiles");
             }
 
-            log.debug("Contents of the document: {}", handler);
-            log.debug("Metadata of the document:");
-            String[] metadataNames = metadata.names();
-
-            for (String name : metadataNames) {
-                log.debug(name + ": " + metadata.get(name));
-            }
-            var songMetadataDto = SongMetadataDto.builder().name(metadata.get("dc:title"))
-                .artist(metadata.get("xmpDM:artist"))
-                .album(metadata.get("xmpDM:album"))
-                .length(metadata.get("xmpDM:duration"))
-                .resourceId(audio.getId())
-                .year(metadata.get("xmpDM:releaseDate"))
-                .build();
-            songServiceClient.saveMetadata(songMetadataDto);
-            return audio.getId();
+            String fileName = audioFile.getOriginalFilename();
+            fileName = fileName.replace(" ", "_");
+            amazonS3.putObject("audiofiles", fileName, inputStream, metadata);
+            String url = "https://s3.amazonaws.com/audiofiles/" + fileName;
+            var audioLocation = resourceRepository.save(AudioLocation.builder().url(url).build());
+            return audioLocation.getId();
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ResourceServiceException("Could not save audio. " + e.getMessage());
@@ -73,23 +51,33 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public byte[] getAudio(long id) {
-        var audio = resourceRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(String.format("Audio file with ID %d is not found", id)));
-        return audio.getAudioData();
+    public byte[] getAudioByFilename(String fileName) {
+        S3Object s3Object = amazonS3.getObject("audiofiles", fileName);
+
+        try (S3ObjectInputStream s3is = s3Object.getObjectContent();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] readBuf = new byte[1024];
+            int readLen = 0;
+            while ((readLen = s3is.read(readBuf)) > 0) {
+                outputStream.write(readBuf, 0, readLen);
+            }
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new ResourceServiceException("Could not get audio. " + e.getMessage());
+        }
     }
 
     @Override
-    @Transactional
-    public void deleteAudio(Set<Long> ids) {
-        resourceRepository.deleteAllById(ids);
-        songServiceClient.deleteMetadataByResourceId(convertSetToCommaSeparatedString(ids));
+    public String getAudioUrlById(Long id) {
+        var audioLocation = resourceRepository.findById(id)
+                                      .orElseThrow(() -> new ResourceNotFoundException(String.format("Audio location with ID %d is not found", id)));
+        return audioLocation.getUrl();
+
     }
 
-    private String convertSetToCommaSeparatedString(Set<Long> ids) {
-        return ids.stream()
-                  .map(String::valueOf)
-                  .collect(Collectors.joining(","));
+    @Override
+    public void deleteAudio(Set<Long> ids) {
+        throw new UnsupportedOperationException();
     }
 }
