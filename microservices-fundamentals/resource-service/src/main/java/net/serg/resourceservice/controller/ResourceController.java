@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import net.serg.resourceservice.dto.IdResponse;
 import net.serg.resourceservice.service.ResourceService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +37,7 @@ public class ResourceController {
 
     }
 
-    @GetMapping(path = "/{filename}")
+    @GetMapping(path = "/filename/{filename}")
     public ResponseEntity<byte[]> getAudioFilename(@PathVariable String filename) {
         var audioData = resourceService.getAudioByFilename(filename);
         return ResponseEntity.ok(audioData);
@@ -43,6 +47,12 @@ public class ResourceController {
     public ResponseEntity<String> getAudioUrlById(@PathVariable Long id) {
         var audioUrl = resourceService.getAudioUrlById(id);
         return ResponseEntity.ok(audioUrl);
+    }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Resource> getAudioById(@PathVariable Long id) {
+        var resource = resourceService.getAudioById(id);
+        return ResponseEntity.ok(resource);
     }
     
     @DeleteMapping

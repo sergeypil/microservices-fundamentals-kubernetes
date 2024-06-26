@@ -11,18 +11,26 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 @Service
 @Slf4j
 public class SongProcessorServiceImpl implements SongProcessorService {
     
 
     @Override
-    public SongMetadataDto extractAudioMetadata(MultipartFile audioFile) {
+    public SongMetadataDto extractAudioMetadata(byte[] audioData, Long audioId) {
+        var inputStream = new ByteArrayInputStream(audioData);
+        return extractAudioMetadataFromStream(inputStream, audioId);
+    }
+
+    @Override
+    public SongMetadataDto extractAudioMetadataFromStream(InputStream inputStream, Long audioId) {
         try {
             //detecting the file type
             var handler = new BodyContentHandler();
             var metadata = new Metadata();
-            var inputStream = audioFile.getInputStream();
             var parseContext = new ParseContext();
 
             //Mp3 parser
@@ -47,6 +55,7 @@ public class SongProcessorServiceImpl implements SongProcessorService {
                 .album(metadata.get("xmpDM:album"))
                 .length(metadata.get("xmpDM:duration"))
                 .year(metadata.get("xmpDM:releaseDate"))
+                .resourceId(audioId)
                 .build();
 
             return songMetadataDto;
@@ -55,5 +64,4 @@ public class SongProcessorServiceImpl implements SongProcessorService {
             throw new ResourceProcessorException("Could not process audio. " + e.getMessage());
         }
     }
-    
 }

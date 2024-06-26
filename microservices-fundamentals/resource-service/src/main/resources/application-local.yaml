@@ -14,7 +14,3 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQLDialect
   application:
     name: resource-service
-
-clients:
-  song-service:
-    url: http://localhost:8081/songs

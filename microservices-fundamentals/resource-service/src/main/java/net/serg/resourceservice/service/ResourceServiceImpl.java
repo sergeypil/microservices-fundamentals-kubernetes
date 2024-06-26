@@ -11,10 +11,13 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.serg.resourceservice.client.RabbitMqSender;
 import net.serg.resourceservice.entity.AudioLocation;
 import net.serg.resourceservice.exception.ResourceNotFoundException;
 import net.serg.resourceservice.exception.ResourceServiceException;
 import net.serg.resourceservice.repository.ResourceRepository;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResourceServiceImpl implements ResourceService {
 
+    private static final String BUCKET_NAME = "audiofiles";
     private final AmazonS3 amazonS3;
     private final ResourceRepository resourceRepository;
+    private final RabbitMqSender rabbitMQSender;
 
     public Long saveAudio(MultipartFile audioFile) {
         try {
@@ -34,15 +39,17 @@ public class ResourceServiceImpl implements ResourceService {
             metadata.setContentType(audioFile.getContentType());
             metadata.setContentLength(audioFile.getSize());
 
-            if (!amazonS3.doesBucketExistV2("audiofiles")) {
-                amazonS3.createBucket("audiofiles");
+            if (!amazonS3.doesBucketExistV2(BUCKET_NAME)) {
+                amazonS3.createBucket(BUCKET_NAME);
             }
 
             String fileName = audioFile.getOriginalFilename();
             fileName = fileName.replace(" ", "_");
-            amazonS3.putObject("audiofiles", fileName, inputStream, metadata);
+            amazonS3.putObject(BUCKET_NAME, fileName, inputStream, metadata);
             String url = "https://s3.amazonaws.com/audiofiles/" + fileName;
             var audioLocation = resourceRepository.save(AudioLocation.builder().url(url).build());
+
+            rabbitMQSender.send("resourceIds", String.valueOf(audioLocation.getId()));
             return audioLocation.getId();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -52,7 +59,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public byte[] getAudioByFilename(String fileName) {
-        S3Object s3Object = amazonS3.getObject("audiofiles", fileName);
+        S3Object s3Object = amazonS3.getObject(BUCKET_NAME, fileName);
 
         try (S3ObjectInputStream s3is = s3Object.getObjectContent();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -79,5 +86,16 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public void deleteAudio(Set<Long> ids) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Resource getAudioById(Long id) {
+        var audioUrl = getAudioUrlById(id);
+        String[] parts = audioUrl.split("/");
+        String fileName = parts[parts.length - 1];
+        S3Object s3object = amazonS3.getObject(BUCKET_NAME, fileName);
+        InputStream is = s3object.getObjectContent();
+
+        return new InputStreamResource(is);
     }
 }

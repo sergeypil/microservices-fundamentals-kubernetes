@@ -1,9 +1,11 @@
 package net.serg.resourceprocessor.service;
 
 import net.serg.resourceprocessor.dto.SongMetadataDto;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 
 public interface SongProcessorService {
 
-    SongMetadataDto extractAudioMetadata(MultipartFile audioFile);
+    SongMetadataDto extractAudioMetadata(byte[] audioData, Long audioId);
+    SongMetadataDto extractAudioMetadataFromStream(InputStream inputStream, Long audioId);
 }

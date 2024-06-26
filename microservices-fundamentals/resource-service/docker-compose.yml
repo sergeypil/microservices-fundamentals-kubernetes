@@ -13,3 +13,8 @@ services:
     volumes:
       - './localstack_data:/tmp/mylocalstack'
       - '/var/run/docker.sock:/var/run/docker.sock'
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    ports:
+      - 15672:15672
+      - 5672:5672
