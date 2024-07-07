@@ -1,0 +1,2 @@
+INSERT INTO song_metadata (id, name, artist, album, length, resource_id, song_year, genre) VALUES (3, 'test name', 'test artist', 'test album', '200', 1, '2022', 'test genre');
+INSERT INTO song_metadata (id, name, artist, album, length, resource_id, song_year, genre) VALUES (4, 'test name2', 'test artist2', 'test album2', '200', 1, '2022', 'test genre');

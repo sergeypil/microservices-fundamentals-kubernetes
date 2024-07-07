@@ -5,13 +5,10 @@ import net.serg.entity.SongMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface SongService {
-
-    @Transactional(readOnly = true)
+    
     SongMetadata getSongMetadataByResourceId(long id);
-
-    @Transactional
+    
     Long saveSongMetadata(SongMetadata songMetadata);
-
-    @Transactional
-    void deleteSongMetadata(Set<Long> ids);
+    
+        void deleteSongMetadata(Set<Long> ids);
 }

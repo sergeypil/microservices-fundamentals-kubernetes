@@ -28,6 +28,7 @@ public class AwsConfig {
     }
 
     @Bean
+    @Profile("!test")
     public AmazonS3 amazonS3(AWSCredentialsProvider credentialsProvider) {
         return AmazonS3ClientBuilder
             .standard()

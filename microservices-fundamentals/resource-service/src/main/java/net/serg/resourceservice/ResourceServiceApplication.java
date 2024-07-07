@@ -1,6 +1,5 @@
 package net.serg.resourceservice;
 
-import net.serg.resourceservice.config.RabbitMqContainerInitializer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
