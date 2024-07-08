@@ -21,4 +21,6 @@ aws:
   url: http://localstack:4566
 eureka:
   client:
-    enabled: false
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka

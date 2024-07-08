@@ -14,6 +14,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,32 +22,22 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AwsConfig {
 
+    @Value("${aws.url}")
+    private String url;
+
     @Bean
-    //@Profile("local")
     AWSCredentialsProvider localAwsCredentialsProvider() {
         return new AWSStaticCredentialsProvider(new BasicAWSCredentials("foo", "bar"));
     }
 
     @Bean
-    @Profile("local")
+    @Profile("!test")
     public AmazonS3 amazonS3local(AWSCredentialsProvider credentialsProvider) {
         return AmazonS3ClientBuilder
             .standard()
-            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:4566", Regions.US_EAST_1.getName()))
+            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, Regions.US_EAST_1.getName()))
             .withPathStyleAccessEnabled(true)
             .withCredentials(credentialsProvider)
             .build();
     }
-
-    @Bean
-    @Profile("compose")
-    public AmazonS3 amazonS3(AWSCredentialsProvider credentialsProvider) {
-        return AmazonS3ClientBuilder
-            .standard()
-            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localstack:4566", Regions.US_EAST_1.getName()))
-            .withPathStyleAccessEnabled(true)
-            .withCredentials(credentialsProvider)
-            .build();
-    }
-    
 }

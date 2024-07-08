@@ -3,6 +3,7 @@ package net.serg.resourceprocessor.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,6 +35,7 @@ public class ResourceServiceClientImpl implements ResourceServiceClient {
 
     @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     @Override
+    @LoadBalanced
     public byte[] getAudioById(Long id) {
         log.info("Calling song-service to get audio");
         HttpHeaders headers = new HttpHeaders();
@@ -48,16 +51,23 @@ public class ResourceServiceClientImpl implements ResourceServiceClient {
 
     @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     @Override
-    public InputStream getAudioStreamById(Long id) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest
-            .newBuilder()
-            .uri(URI.create(url + "/" + id))
-            .build();
+    @LoadBalanced
+    public InputStream getAudioStreamById(Long id) throws IOException {
+        log.info("Calling song-service to get audio stream");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_OCTET_STREAM));
 
-        HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        return response.body();
+        ResponseEntity<byte[]> response = restTemplate.exchange(
+            url + "/" + id, HttpMethod.GET, entity, byte[].class);
+
+        byte[] responseBody = response.getBody();
+        if (responseBody != null) {
+            return new ByteArrayInputStream(responseBody);
+        } else {
+            throw new IOException("Resource service returned empty response");
+        }
     }
     
     

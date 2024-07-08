@@ -10,5 +10,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-  application:
-    name: song-service
+eureka:
+  client:
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka

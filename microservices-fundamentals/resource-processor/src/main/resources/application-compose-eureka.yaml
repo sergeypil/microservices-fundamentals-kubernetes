@@ -8,12 +8,13 @@ spring:
     port: 5672
     username: guest
     password: guest
-
 clients:
   song-service:
-    url: http://song-service:8081/songs
+    url: http://SONG-SERVICE/songs
   resource-service:
-    url: http://resource-service:8080/resources
+    url: http://RESOURCE-SERVICE/resources
 eureka:
   client:
-    enabled: false
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka

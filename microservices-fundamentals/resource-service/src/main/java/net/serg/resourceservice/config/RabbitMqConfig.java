@@ -13,7 +13,7 @@ public class RabbitMqConfig {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         return new RabbitTemplate(connectionFactory);
     }
-
+        
     @Bean
     Queue resourceIdsQueue() {
         return new Queue("resourceIds");
