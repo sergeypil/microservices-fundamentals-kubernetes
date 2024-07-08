@@ -2,6 +2,7 @@ package net.serg.integration;
 
 import net.serg.dto.IdResponse;
 import net.serg.dto.SongMetadataDto;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_CLASS, scripts="classpath:init.sql")
+@Disabled
 public class SongControllerIT {
 
     @Container

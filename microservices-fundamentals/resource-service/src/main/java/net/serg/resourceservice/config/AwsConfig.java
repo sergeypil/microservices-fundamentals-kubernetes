@@ -22,17 +22,28 @@ import org.springframework.context.annotation.Profile;
 public class AwsConfig {
 
     @Bean
-    @Profile("local")
+    //@Profile("local")
     AWSCredentialsProvider localAwsCredentialsProvider() {
         return new AWSStaticCredentialsProvider(new BasicAWSCredentials("foo", "bar"));
     }
 
     @Bean
-    @Profile("!test")
-    public AmazonS3 amazonS3(AWSCredentialsProvider credentialsProvider) {
+    @Profile("local")
+    public AmazonS3 amazonS3local(AWSCredentialsProvider credentialsProvider) {
         return AmazonS3ClientBuilder
             .standard()
             .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:4566", Regions.US_EAST_1.getName()))
+            .withPathStyleAccessEnabled(true)
+            .withCredentials(credentialsProvider)
+            .build();
+    }
+
+    @Bean
+    @Profile("compose")
+    public AmazonS3 amazonS3(AWSCredentialsProvider credentialsProvider) {
+        return AmazonS3ClientBuilder
+            .standard()
+            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localstack:4566", Regions.US_EAST_1.getName()))
             .withPathStyleAccessEnabled(true)
             .withCredentials(credentialsProvider)
             .build();

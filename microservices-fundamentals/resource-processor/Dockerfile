@@ -13,4 +13,4 @@ COPY --from=build /home/gradle/build/libs/*.jar app.jar
 
 RUN mkdir -p /app && (cd /app; jar -xf /app.jar)
 
-ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.SongServiceApplication"]
+ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.resourceprocessor.ResourceProcessorApplication"]

@@ -1,0 +1,16 @@
+server:
+  port: ${SERVER_PORT}
+spring:
+  application:
+    name: resource-processor-service
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+clients:
+  song-service:
+    url: http://song-service:8081/songs
+  resource-service:
+    url: http://resource-service:8080/resources

@@ -1,0 +1,104 @@
+version: '3.7'
+networks:
+  my_network:
+    external: true
+services:
+  resource-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${RESOURCEDB_PASSWORD}
+    volumes:
+      - ./resource-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+  song-db:
+    image: postgres
+    ports:
+      - "15999:5432"
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: song-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${SONGDB_PASSWORD}
+    volumes:
+      - ./song-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+  localstack:
+    image: localstack/localstack
+    container_name: local_aws_s3
+    restart: always
+    ports:
+      - "4566:4566"
+    networks:
+      - ${GLOBAL_NETWORK}
+    environment:
+      - SERVICES=${LOCALSTACK_SERVICES}
+      - DEFAULT_REGION=${LOCALSTACK_DEFAULT_REGION}
+    volumes:
+      - './localstack_data:/tmp/mylocalstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    container_name: rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - ${GLOBAL_NETWORK}
+  resource-service:
+    build: ./resource-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-service
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: ${RESOURCESERVICE_SPRING_PROFILE}
+    depends_on:
+      - resource-db
+      - localstack
+      - rabbitmq
+  song-service:
+    build: ./song-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: song-service
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+      SPRING_PROFILES_ACTIVE: ${SONGSERVICE_SPRING_PROFILE}
+    depends_on:
+      - song-db
+  resource-processor-service:
+    build: ./resource-processor
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-processor-service
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      SPRING_PROFILES_ACTIVE: ${RESOURCEPROCESSORSERVICE_SPRING_PROFILE}
+    depends_on:
+      - rabbitmq
+  # discovery-service:
+  #   build: ./discovery-service
+  #   volumes:
+  #     - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+  #   networks:
+  #     - ${GLOBAL_NETWORK}
+  #   container_name: discovery-service
+  #   ports:
+  #     - "8761:8761"

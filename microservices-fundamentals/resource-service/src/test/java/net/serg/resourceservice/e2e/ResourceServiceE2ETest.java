@@ -5,6 +5,7 @@ import net.serg.resourceservice.dto.IdResponse;
 import net.serg.resourceservice.dto.SongMetadataDto;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 // Real environment is used for this test
 // To run this test run docker-compose -> resource-service -> resource-processor -> song-service
+@Disabled
 public class ResourceServiceE2ETest {
     
     @Test
