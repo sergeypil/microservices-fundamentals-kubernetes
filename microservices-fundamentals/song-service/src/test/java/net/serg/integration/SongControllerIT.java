@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +49,7 @@ public class SongControllerIT {
             .artist("Test Artist3")
             .album("Test Album3")
             .length("3:30")
-            .resourceId(3L)
+            .resourceId(2L)
             .year("2000")
             .genre("Test Genre")
             .build();
