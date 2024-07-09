@@ -15,4 +15,4 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 
 RUN mkdir -p /app && (cd /app; jar -xf /app.jar)
 
-ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.discoveryservice.DiscoveryServiceApplication"]
+ENTRYPOINT ["java","-cp","/app:/app/BOOT-INF/classes:/app/BOOT-INF/lib/*","net.serg.resourceapigateway.ResourceApiGatewayApplication"]

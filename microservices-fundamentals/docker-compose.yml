@@ -93,6 +93,18 @@ services:
       SPRING_PROFILES_ACTIVE: ${RESOURCEPROCESSORSERVICE_SPRING_PROFILE}
     depends_on:
       - rabbitmq
+  resource-api-gateway:
+    build: ./resource-api-gateway
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-api-gateway
+    ports:
+      - "8084:8084"
+    environment:
+      SERVER_PORT: 8084
+      SPRING_PROFILES_ACTIVE: ${RESOURCEAPIGATEWAY_SPRING_PROFILE}
   discovery-service:
     build: ./discovery-service
     volumes:

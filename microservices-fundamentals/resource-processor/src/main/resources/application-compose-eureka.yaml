@@ -10,9 +10,9 @@ spring:
     password: guest
 clients:
   song-service:
-    url: http://SONG-SERVICE/songs
+    url: http://song-service/songs
   resource-service:
-    url: http://RESOURCE-SERVICE/resources
+    url: http://resource-service/resources
 eureka:
   client:
     prefer-ip-address: true

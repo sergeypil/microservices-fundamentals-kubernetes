@@ -31,7 +31,6 @@ public class ResourceController {
         var id = resourceService.saveAudio(audioFile);
         var response = new IdResponse(id);
         return ResponseEntity.ok(response);
-
     }
 
     @GetMapping(path = "/filename/{filename}")
