@@ -22,3 +22,6 @@ aws:
 eureka:
   client:
     enabled: false
+clients:
+  storage-service:
+    url: http://localhost:8085/api/storages

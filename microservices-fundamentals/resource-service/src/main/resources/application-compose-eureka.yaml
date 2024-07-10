@@ -24,3 +24,6 @@ eureka:
     prefer-ip-address: true
     serviceUrl:
       defaultZone: http://discovery-service:8761/eureka
+clients:
+  storage-service:
+    url: http://localhost:8085/api/storages

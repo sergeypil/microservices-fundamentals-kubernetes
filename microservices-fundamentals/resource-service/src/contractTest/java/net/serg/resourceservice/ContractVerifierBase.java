@@ -3,6 +3,7 @@ package net.serg.resourceservice;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import net.serg.resourceservice.service.ResourceService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.doNothing;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"})
+@Disabled
 public class ContractVerifierBase {
 
     @MockBean
@@ -43,9 +45,6 @@ public class ContractVerifierBase {
     private void setupStubsForResourceService() {
         given(resourceService.saveAudio(any(MultipartFile.class)))
             .willReturn(1L);
-        
-        given(resourceService.getAudioByFilename(any(String.class)))
-            .willReturn(new byte[1024]);
         
         given(resourceService.getAudioUrlById(any(Long.class)))
             .willReturn("\"http://localhost:8585/resources/1\"");

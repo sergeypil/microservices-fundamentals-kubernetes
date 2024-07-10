@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8085
 spring:
   datasource:
     driver-class-name: "org.postgresql.Driver"
-    url: jdbc:postgresql://localhost:5432/audio
+    url: jdbc:postgresql://localhost:5432/storage
     username: postgres
     password: postgres
   jpa:
@@ -12,11 +12,11 @@ spring:
       ddl-auto: update
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-aws:
-  url: http://localhost:4566
+  sql:
+    init:
+      mode: always
 eureka:
   client:
-    enabled: false
-clients:
-  storage-service:
-    url: http://localhost:8085/storages
+    prefer-ip-address: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

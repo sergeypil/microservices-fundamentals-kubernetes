@@ -8,11 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ResourceService {
     
     Long saveAudio(MultipartFile audioFile);
-
-    byte[] getAudioByFilename(String fileName);
-    
     String getAudioUrlById(Long id);
     void deleteAudio(Set<Long> ids);
-
     Resource getAudioById(Long id);
+    void moveAudioById(Long id);
 }

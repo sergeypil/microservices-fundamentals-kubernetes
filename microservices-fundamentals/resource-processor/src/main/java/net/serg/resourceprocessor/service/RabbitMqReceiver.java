@@ -28,5 +28,6 @@ public class RabbitMqReceiver {
         var songMetadata = songProcessorService.extractAudioMetadataFromStream(audioStreamById, audioId);
         log.info("Saving metadata to song-service");
         songServiceClient.saveMetadata(songMetadata);
+        resourceServiceClient.notifyResourceService(audioId);
     }
 }

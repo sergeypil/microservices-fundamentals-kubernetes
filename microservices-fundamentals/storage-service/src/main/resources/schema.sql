@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS storage_object (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(255),
+  bucket VARCHAR(255),
+  path VARCHAR(255)
+);

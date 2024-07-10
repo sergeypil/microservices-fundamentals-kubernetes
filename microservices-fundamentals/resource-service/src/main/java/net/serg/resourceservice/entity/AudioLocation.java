@@ -1,5 +1,6 @@
 package net.serg.resourceservice.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +25,6 @@ public class AudioLocation {
     @SequenceGenerator(name = "audio_location_seq", sequenceName = "audio_location_seq", allocationSize = 1)
     private Long id;
     
-    private String url;
+    private String bucketName;
+    private String path;
 }

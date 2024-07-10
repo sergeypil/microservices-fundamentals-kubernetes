@@ -27,6 +27,18 @@ services:
       POSTGRES_PASSWORD: ${SONGDB_PASSWORD}
     volumes:
       - ./song-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+  storage-db:
+    image: postgres
+    ports:
+      - "16000:5432"
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: storage-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${STORAGEDB_PASSWORD}
+    volumes:
+      - ./storage-service/init.sql:/docker-entrypoint-initdb.d/init.sql
   localstack:
     image: localstack/localstack
     container_name: local_aws_s3
@@ -93,6 +105,20 @@ services:
       SPRING_PROFILES_ACTIVE: ${RESOURCEPROCESSORSERVICE_SPRING_PROFILE}
     depends_on:
       - rabbitmq
+  storage-service:
+    build: ./storage-service
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: storage-service
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      SPRING_PROFILES_ACTIVE: ${STORAGESERVICE_SPRING_PROFILE}
+    depends_on:
+      - storage-db
   resource-api-gateway:
     build: ./resource-api-gateway
     volumes:

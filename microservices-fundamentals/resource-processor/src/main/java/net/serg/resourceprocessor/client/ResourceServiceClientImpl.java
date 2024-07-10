@@ -3,7 +3,6 @@ package net.serg.resourceprocessor.client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,10 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @Service
@@ -35,7 +30,6 @@ public class ResourceServiceClientImpl implements ResourceServiceClient {
 
     @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     @Override
-    @LoadBalanced
     public byte[] getAudioById(Long id) {
         log.info("Calling song-service to get audio");
         HttpHeaders headers = new HttpHeaders();
@@ -51,7 +45,6 @@ public class ResourceServiceClientImpl implements ResourceServiceClient {
 
     @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
     @Override
-    @LoadBalanced
     public InputStream getAudioStreamById(Long id) throws IOException {
         log.info("Calling song-service to get audio stream");
         HttpHeaders headers = new HttpHeaders();
@@ -69,7 +62,10 @@ public class ResourceServiceClientImpl implements ResourceServiceClient {
             throw new IOException("Resource service returned empty response");
         }
     }
-    
-    
-    
+
+    @Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 3000))
+    public void notifyResourceService(Long id) {
+        log.info("Calling song-service to move audio to another bucket");
+        restTemplate.exchange(url + "/" + id, HttpMethod.PUT, null, Void.class);
+    }
 }
