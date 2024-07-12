@@ -1,6 +1,8 @@
 server:
   port: ${SERVER_PORT}
 spring:
+  zipkin:
+    base-url: http://zipkin:9411/
   datasource:
     driver-class-name: "org.postgresql.Driver"
     url: jdbc:postgresql://resource-db:5432/audio
@@ -24,4 +26,10 @@ eureka:
     enabled: false
 clients:
   storage-service:
-    url: http://localhost:8085/api/storages
+    url: http://storage-service/storages
+logstash:
+  destination: logstash:5044
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

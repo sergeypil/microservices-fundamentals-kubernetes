@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  zipkin:
+    base-url: http://localhost:9411
   datasource:
     driver-class-name: "org.postgresql.Driver"
     url: jdbc:postgresql://localhost:5432/audio
@@ -12,11 +14,13 @@ spring:
       ddl-auto: update
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
-aws:
-  url: http://localhost:4566
 eureka:
   client:
     enabled: false
 clients:
   storage-service:
     url: http://localhost:8085/storages
+logstash:
+  destination: localhost:5044
+aws:
+  url: http://localhost:4566

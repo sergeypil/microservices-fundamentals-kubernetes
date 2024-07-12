@@ -10,7 +10,6 @@ import net.serg.dto.SongMetadataDto;
 import net.serg.entity.SongMetadata;
 import net.serg.service.SongService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping(path = "/songs")
 @RequiredArgsConstructor
 @Slf4j
@@ -29,7 +29,7 @@ public class SongController {
 
     @PostMapping
     public ResponseEntity<IdResponse> saveSongMetadata(@RequestBody SongMetadataDto songMetadataDto) {
-        log.info("Calling song-service to save metadata");
+        log.info("Saving song metadata: {}", songMetadataDto);
         var songMetadata = songMetadataDtoToSongMetadata(songMetadataDto);
         var id = songService.saveSongMetadata(songMetadata);
         var response = new IdResponse(id);
@@ -38,7 +38,7 @@ public class SongController {
 
     @GetMapping(path = "/{resourceId}")
     public ResponseEntity<SongMetadataDto> getSongMetadataByResourceId(@PathVariable Long resourceId) {
-        log.info("Calling song-service to get metadata by resourceId: {}", resourceId);
+        log.info("Getting song metadata by resourceId: {}", resourceId);
         var songMetaData = songService.getSongMetadataByResourceId(resourceId);
         var songMetadataDto = songMetadataToSongMetadataDto(songMetaData);
         return ResponseEntity.ok(songMetadataDto);

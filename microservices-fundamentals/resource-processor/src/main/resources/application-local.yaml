@@ -8,3 +8,5 @@ clients:
 eureka:
   client:
     enabled: false
+logstash:
+  destination: localhost:5044

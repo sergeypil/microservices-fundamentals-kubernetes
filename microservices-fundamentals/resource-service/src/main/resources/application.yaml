@@ -1,32 +1,31 @@
 spring:
   application:
     name: resource-service
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    enabled: true
+    propagation:
+      type: b3
+    sampling:
+      probability: 1.0
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 aws:
   url: http://localhost:4566
-
-#server:
-#  port: ${SERVER_PORT}
-#spring:
-#  datasource:
-#    driver-class-name: "org.postgresql.Driver"
-#    url: jdbc:postgresql://resource-db:5432/audio
-#    username: postgres
-#    password: postgres
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: update
-#    properties:
-#      dialect: org.hibernate.dialect.PostgreSQLDialect
-#  application:
-#    name: resource-service
-#
-#clients:
-#  song-service:
-#    url: http://song-service/songs
-#logging:
-#  level:
-#    org:
-#      hibernate: DEBUG
-#      springframework:
-#        jdbc: DEBUG
+clients:
+  storage-service:
+    url: http://storage-service/storages

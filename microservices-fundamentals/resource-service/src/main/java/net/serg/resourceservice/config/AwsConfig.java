@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AwsConfig {
 
-    @Value("${aws.url}")
+    @Value("${aws.url:http://localhost:4566}")
     private String url;
 
     @Bean

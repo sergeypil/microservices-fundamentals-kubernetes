@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: resource-processor-service
+  zipkin:
+    base-url: http://zipkin:9411/
   rabbitmq:
     host: rabbitmq
     port: 5672
@@ -17,3 +19,9 @@ clients:
 eureka:
   client:
     enabled: false
+logstash:
+  destination: logstash:5044
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

@@ -1,25 +1,30 @@
 spring:
   application:
     name: song-service
-
-#server:
-#  port: ${SERVER_PORT} 
-#spring:
-#  datasource:
-#    driver-class-name: "org.postgresql.Driver"
-#    url: jdbc:postgresql://song-db:5432/song_metadata
-#    username: postgres
-#    password: postgres
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: update
-#  application:
-#    name: song-service
-#eureka:
-#  client:
-#    prefer-ip-address: true
-#    serviceUrl:
-#      defaultZone: http://discovery-service:8761/eureka
-
-
+  zipkin:
+    base-url: http://localhost:9411
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    enabled: true
+    propagation:
+      type: b3
+    sampling:
+      probability: 1.0
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+logstash:
+  destination: localhost:5044

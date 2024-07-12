@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+  <springProperty scope="context" name="application_name" source="spring.application.name"/>
+  <springProperty scope="context" name="logstash_destination" source="logstash.destination"/>
+
+  <appender name="elk" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <param name="Encoding" value="UTF-8"/>
+    <destination>${logstash_destination}</destination>
+    <!-- encoder is required -->
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <customFields>{"app_name":"resource-service"}</customFields>
+    </encoder>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="elk"/>
+  </root>
+
+</configuration>

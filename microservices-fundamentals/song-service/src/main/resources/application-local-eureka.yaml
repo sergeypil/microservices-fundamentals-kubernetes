@@ -15,3 +15,5 @@ eureka:
     prefer-ip-address: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
+logstash:
+  destination: localhost:5044

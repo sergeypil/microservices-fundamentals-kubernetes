@@ -1,7 +1,7 @@
 package net.serg.resourceservice.client;
 
-import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.serg.resourceservice.dto.StorageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -12,10 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Objects;
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StorageClient {
     
     private final RestTemplate restTemplate;
@@ -25,6 +24,7 @@ public class StorageClient {
 
     @CircuitBreaker(name = "storageService", fallbackMethod ="getStubStorages")
     public List<StorageDto> getStorages() {
+        log.info("Calling storage-service to get storages");
         ResponseEntity<List<StorageDto>> response = restTemplate.exchange(
             url,
             HttpMethod.GET,

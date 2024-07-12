@@ -31,11 +31,13 @@ public class StorageController {
 
     @PostMapping
     public StorageDto saveStorageObject(@RequestBody StorageDto storageDto) {
+        log.info("Saving storage: {}", storageDto);
         return storageService.saveStorage(storageDto);
     }
 
     @GetMapping
     public List<StorageDto> getStorages(@RequestParam(required = false) StorageDto.StorageType type) {
+        log.info("Getting storages by type: {}", type);
         if (Objects.isNull(type)) {
             return storageService.getAllStorages();
         }
@@ -44,6 +46,7 @@ public class StorageController {
 
     @DeleteMapping
     public RemovedStoragesDto deleteStorage(@RequestParam String id) {
+        log.info("Deleting storages by id: {}", id);
         if (id == null || id.length() > 200) {
             throw new RuntimeException("ids length exceed!");
         }

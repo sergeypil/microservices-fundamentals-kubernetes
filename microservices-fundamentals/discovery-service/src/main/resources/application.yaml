@@ -4,8 +4,37 @@ server:
 spring:
   application:
     name: discovery-service
-
+  zipkin:
+    base-url: http://zipkin:9411/
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+management:
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    enabled: true
+    propagation:
+      type: b3
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+logstash:
+  destination: logstash:5044

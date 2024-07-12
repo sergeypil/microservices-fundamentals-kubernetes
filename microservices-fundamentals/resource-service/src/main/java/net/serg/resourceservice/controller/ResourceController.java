@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.serg.resourceservice.dto.IdResponse;
 import net.serg.resourceservice.service.ResourceService;
 import org.springframework.core.io.Resource;
@@ -24,12 +25,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping(path = "/resources")
 @RequiredArgsConstructor
+@Slf4j
 public class ResourceController {
 
     private final ResourceService resourceService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<IdResponse> saveAudio(@RequestPart MultipartFile audioFile) {
+        log.info("Saving audio file");
         var id = resourceService.saveAudio(audioFile);
         var response = new IdResponse(id);
         return ResponseEntity.ok(response);
@@ -43,18 +46,21 @@ public class ResourceController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Resource> getAudioById(@PathVariable Long id) {
+        log.info("Getting audio by id: {}", id);
         var resource = resourceService.getAudioById(id);
         return ResponseEntity.ok(resource);
     }
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<Void> moveAudioById(@PathVariable Long id) {
+        log.info("Moving audio by id: {}", id);
         resourceService.moveAudioById(id);
         return ResponseEntity.ok().build();
     }
     
     @DeleteMapping
     public ResponseEntity<Set<Long>> deleteAudioByIds(@RequestParam(name = "id") String idsSeparatedByComma) {
+        log.info("Deleting audio by ids, ids: {}", idsSeparatedByComma);
         var ids = Arrays.stream(idsSeparatedByComma.split(","))
             .map(String::trim)
             .map(Long::valueOf)

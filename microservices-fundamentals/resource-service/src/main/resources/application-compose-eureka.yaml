@@ -1,6 +1,8 @@
 server:
   port: ${SERVER_PORT}
 spring:
+  zipkin:
+    base-url: http://zipkin:9411/
   datasource:
     driver-class-name: "org.postgresql.Driver"
     url: jdbc:postgresql://resource-db:5432/audio
@@ -17,13 +19,19 @@ spring:
     port: 5672
     username: guest
     password: guest
-aws:
-  url: http://localstack:4566
 eureka:
   client:
     prefer-ip-address: true
     serviceUrl:
       defaultZone: http://discovery-service:8761/eureka
+logstash:
+  destination: logstash:5044
 clients:
   storage-service:
-    url: http://localhost:8085/api/storages
+    url: http://storage-service/storages
+aws:
+  url: http://localstack:4566
+management:
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
