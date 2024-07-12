@@ -5,14 +5,10 @@ spring:
   application:
     name: discovery-service
   zipkin:
-    base-url: http://localhost:9411
+    base-url: http://localhost:9411/
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
 logstash:
   destination: localhost:5044
-management:
-  zipkin:
-    tracing:
-      endpoint: localhost:9411/api/v2/spans
