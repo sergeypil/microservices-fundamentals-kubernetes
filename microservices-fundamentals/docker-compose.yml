@@ -223,3 +223,14 @@ services:
       - MYSQL_HOST=mysql
       - ZIPKIN_LOG_LEVEL=DEBUG
       - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG
+  keycloak-server:
+    build: ./jwt-auth-server
+    container_name: keycloak-server
+    networks:
+      - ${GLOBAL_NETWORK}
+    volumes:
+      - ./jwt-auth-server/src/main/resources/mytest.jks:/app/src/main/resources/mytest.jks
+    ports:
+      - "8086:8086"
+    environment:
+      SERVER_PORT: 8086

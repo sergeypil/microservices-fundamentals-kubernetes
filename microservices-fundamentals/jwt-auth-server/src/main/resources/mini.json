@@ -1,0 +1,81 @@
+{
+  "id": "resource-microservices",
+  "realm": "resource-microservices",
+  "enabled": true,
+  "sslRequired": "external",
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User role",
+        "composite": false,
+        "containerId": "resource-microservices"
+      },
+      {
+        "name": "admin",
+        "description": "Admin role",
+        "composite": false,
+        "containerId": "resource-microservices"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "kate-admin",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    },
+    {
+      "username": "tiffany-user",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "1234",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "id": "resource-client-id",
+      "clientId": "resource-client",
+      "name": "Resource Client",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "resource-client-secret",
+      "redirectUris": [
+        "http://localhost:8084/*"
+      ],
+      "webOrigins": [],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1
+    }
+  ],
+  "keycloakVersion": "11.0.2",
+  "userManagedAccessAllowed": false
+}

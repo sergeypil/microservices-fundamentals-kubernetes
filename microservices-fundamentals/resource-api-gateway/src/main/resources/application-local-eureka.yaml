@@ -3,6 +3,8 @@ server:
 spring:
   cloud:
     gateway:
+      default-filters:
+        - TokenRelay=
       routes:
         - id: resource-service
           uri: lb://resource-service
@@ -16,6 +18,19 @@ spring:
           uri: lb://storage-service
           predicates:
             - Path=/storages/**
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8086/auth/realms/resource-microservices
+        registration:
+          resource-client:
+            provider: keycloak
+            client-id: resource-client
+            client-secret: resource-client-secret
+            scope:
+              - openid
 eureka:
   client:
     prefer-ip-address: true

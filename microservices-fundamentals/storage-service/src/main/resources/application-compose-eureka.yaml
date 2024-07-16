@@ -1,6 +1,11 @@
 server:
   port: ${SERVER_PORT}
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak-server:8086/auth/realms/resource-microservices
   zipkin:
     base-url: http://zipkin:9411/
   datasource:
