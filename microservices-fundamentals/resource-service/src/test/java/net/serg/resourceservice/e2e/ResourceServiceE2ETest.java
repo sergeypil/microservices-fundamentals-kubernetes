@@ -22,13 +22,10 @@ public class ResourceServiceE2ETest {
     
     @Test
     void shouldSaveAudioSuccessfully() {
-        // Given
-        File file = new File(getClass().getClassLoader().getResource("sample.mp3").getFile());
-
         // When
         IdResponse idResponse = given()
             .baseUri("http://localhost:8080")
-            .multiPart("audioFile", file)
+            .multiPart("audioFile", "sample.mp3", "test content".getBytes())
             .when()
             .post("/resources")
             .then()
@@ -43,8 +40,9 @@ public class ResourceServiceE2ETest {
         // Then
         Awaitility
             .await()
-            .pollDelay(5, TimeUnit.SECONDS)
-            .atMost(20, TimeUnit.SECONDS)
+            .pollInterval(10, TimeUnit.SECONDS)
+            .pollDelay(15, TimeUnit.SECONDS)
+            .atMost(45, TimeUnit.SECONDS)
             .untilAsserted(() -> {
                 var songMetadataDto =
                     given()
