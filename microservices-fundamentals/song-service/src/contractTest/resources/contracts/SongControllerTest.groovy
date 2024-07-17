@@ -5,6 +5,7 @@ import org.springframework.cloud.contract.spec.Contract
 [
         Contract.make {
             description 'Should save the song metadata successfully'
+            name 'Should save the song metadata successfully'
             request {
                 method 'POST'
                 url '/songs'
@@ -38,6 +39,7 @@ import org.springframework.cloud.contract.spec.Contract
 
         Contract.make {
             description 'Should fetch the song metadata successfully'
+            name 'Should fetch the song metadata successfully'
             request {
                 method 'GET'
                 url '/songs/1'
@@ -63,6 +65,7 @@ import org.springframework.cloud.contract.spec.Contract
 
         Contract.make {
             description 'Should delete the song metadata successfully'
+            name 'Should delete the song metadata successfully'
             request {
                 method 'DELETE'
                 url '/songs?id=1,2,3'

@@ -21,7 +21,9 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional(readOnly = true)
     public SongMetadata getSongMetadataByResourceId(long resourceId) {
-        var songMetadata = songRepository.findByResourceId(resourceId)
+        var songMetadata = songRepository.findAllByResourceId(resourceId)
+            .stream()
+            .findFirst()
             .orElseThrow(() -> new ResourceNotFoundException(String.format("Song Metadata for resource with ID %d is not found", resourceId)));
         return songMetadata;
     }

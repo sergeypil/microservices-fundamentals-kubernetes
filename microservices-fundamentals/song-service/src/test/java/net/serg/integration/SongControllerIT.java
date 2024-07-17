@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -24,7 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_CLASS, scripts="classpath:init.sql")
-@Disabled
+@ActiveProfiles("test")
+@Disabled("Test container is not working during building docker image")
 public class SongControllerIT {
 
     @Container
@@ -36,7 +38,7 @@ public class SongControllerIT {
     @Test
     public void getSongMetadataByResourceId() {
         // when
-        ResponseEntity<SongMetadataDto> response = testRestTemplate.getForEntity("/songs/3", SongMetadataDto.class);
+        ResponseEntity<SongMetadataDto> response = testRestTemplate.getForEntity("/songs/9", SongMetadataDto.class);
         
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

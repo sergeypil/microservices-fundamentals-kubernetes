@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 
@@ -27,7 +28,6 @@ import static org.mockito.Mockito.doNothing;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration"})
-@Disabled
 public class ContractVerifierBase {
 
     @MockBean
@@ -44,7 +44,7 @@ public class ContractVerifierBase {
 
     private void setupStubsForResourceService() {
         given(resourceService.saveAudio(any(MultipartFile.class)))
-            .willReturn(1L);
+            .willReturn(123L);
         
         given(resourceService.getAudioUrlById(any(Long.class)))
             .willReturn("\"http://localhost:8585/resources/1\"");
@@ -52,6 +52,7 @@ public class ContractVerifierBase {
         doNothing().when(resourceService).deleteAudio(any(Set.class));
         
         given(resourceService.getAudioById(any(Long.class)))
-            .willReturn(new InputStreamResource(new ByteArrayInputStream(new byte[1024]))); // передайте подходящее значение
+            .willReturn(new InputStreamResource(new ByteArrayInputStream(new byte[1024])));
+        doNothing().when(resourceService).moveAudioById(anyLong());
     }
 }

@@ -29,3 +29,5 @@ aws:
 clients:
   storage-service:
     url: http://storage-service/storages
+logstash:
+  destination: localhost:5044

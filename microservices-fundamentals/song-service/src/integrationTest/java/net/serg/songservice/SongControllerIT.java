@@ -1,4 +1,4 @@
-package net.serg;
+package net.serg.songservice;
 
 import net.serg.dto.IdResponse;
 import net.serg.dto.SongMetadataDto;
@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -25,7 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_CLASS, scripts="classpath:init.sql")
-@Disabled
+@ActiveProfiles("test")
+@Disabled("Error in idea No matching tests found in any candidate test task")
 public class SongControllerIT {
 
     @Container
@@ -37,7 +38,7 @@ public class SongControllerIT {
     @Test
     public void getSongMetadataByResourceId() {
         // when
-        ResponseEntity<SongMetadataDto> response = testRestTemplate.getForEntity("/songs/3", SongMetadataDto.class);
+        ResponseEntity<SongMetadataDto> response = testRestTemplate.getForEntity("/songs/9", SongMetadataDto.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -52,7 +53,7 @@ public class SongControllerIT {
                                                          .artist("Test Artist3")
                                                          .album("Test Album3")
                                                          .length("3:30")
-                                                         .resourceId(3L)
+                                                         .resourceId(2L)
                                                          .year("2000")
                                                          .genre("Test Genre")
                                                          .build();

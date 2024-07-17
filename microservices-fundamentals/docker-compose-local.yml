@@ -1,100 +1,118 @@
 version: "3.8"
-
+networks:
+  my_network:
+    external: true
 services:
-  localstack:
-    image: localstack/localstack
-    container_name: local_aws_s3
-    restart: always
+  # localstack:
+  #   image: localstack/localstack
+  #   container_name: local_aws_s3
+  #   restart: always
+  #   ports:
+  #     - "4566:4566"
+  #   environment:
+  #     - SERVICES=s3
+  #     - DEFAULT_REGION=us-east-1
+  #   volumes:
+  #     - './docker-config/localstack_data:/tmp/mylocalstack'
+  #     - '/var/run/docker.sock:/var/run/docker.sock'
+  # rabbitmq:
+  #   image: rabbitmq:3.10.7-management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - 15672:15672
+  #     - 5672:5672
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   ports:
+  #     - 9090:9090
+  #   volumes:
+  #      - ./docker-config/prometheus/prometheus-local.yml:/etc/prometheus/prometheus.yml
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./docker-config/grafana-provisioning/datasources:/etc/grafana/provisioning/datasources
+  #     - ./docker-config/grafana-provisioning/dashboards:/etc/grafana/provisioning/dashboards
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.14
+  #   container_name: elasticsearch
+  #   volumes:
+  #     - ./docker-config/elk/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  #     - ./docker-volumes/esdata01:/var/lib/elasticsearch/data
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   environment:
+  #     BOOTSTRAP_MEMORY_LOCK: "true"
+  #     ES_JAVA_OPTS: -Xms512m -Xmx1024m
+  #     bootstrap.system_call_filter: false
+  #     discovery.type: single-node
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:7.17.14
+  #   container_name: logstash
+  #   command: -f /etc/logstash/conf.d/
+  #   volumes:
+  #     - ./docker-config/logstash/:/etc/logstash/conf.d/
+  #     - ./docker-volumes/logstashdata01:/var/lib/logstash/data
+  #   ports:
+  #     - "5044:5044"
+  #     - "9600:9600"
+  #   environment:
+  #     LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+  #   depends_on:
+  #     - elasticsearch
+  #   links:
+  #     - elasticsearch
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.17.14
+  #   container_name: kibana
+  #   volumes:
+  #     - ./docker-config/elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+  #     - ./docker-volumes/kibanadata:/var/lib/kibana/data
+  #   ports:
+  #     - "5601:5601"
+  #   depends_on:
+  #     - elasticsearch
+  #   links:
+  #     - elasticsearch
+  # zipkin:
+  #   image: openzipkin/zipkin
+  #   container_name: zipkin
+  #   ports:
+  #     - "9411:9411"
+  #   environment:
+  #     - STORAGE_TYPE=mem
+  #     - MYSQL_HOST=mysql
+  #     - ZIPKIN_LOG_LEVEL=DEBUG
+  #     - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG
+  resource-api-gateway:
+    build: ./resource-api-gateway
+    volumes:
+      - C:/Users/Sergey_Pil/.gradle:/home/gradle/.gradle
+    networks:
+      - ${GLOBAL_NETWORK}
+    container_name: resource-api-gateway
     ports:
-      - "4566:4566"
+      - "8084:8084"
     environment:
-      - SERVICES=s3
-      - DEFAULT_REGION=us-east-1
-    volumes:
-      - './docker-config/localstack_data:/tmp/mylocalstack'
-      - '/var/run/docker.sock:/var/run/docker.sock'
-  rabbitmq:
-    image: rabbitmq:3.10.7-management
-    container_name: rabbitmq
-    ports:
-      - 15672:15672
-      - 5672:5672
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - 9090:9090
-    volumes:
-       - ./docker-config/prometheus/prometheus-local.yml:/etc/prometheus/prometheus.yml
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - 3000:3000
-    volumes:
-      - ./docker-config/grafana-provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./docker-config/grafana-provisioning/dashboards:/etc/grafana/provisioning/dashboards
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.14
-    container_name: elasticsearch
-    volumes:
-      - ./docker-config/elk/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./docker-volumes/esdata01:/var/lib/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    environment:
-      BOOTSTRAP_MEMORY_LOCK: "true"
-      ES_JAVA_OPTS: -Xms512m -Xmx1024m
-      bootstrap.system_call_filter: false
-      discovery.type: single-node
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.17.14
-    container_name: logstash
-    command: -f /etc/logstash/conf.d/
-    volumes:
-      - ./docker-config/logstash/:/etc/logstash/conf.d/
-      - ./docker-volumes/logstashdata01:/var/lib/logstash/data
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      SERVER_PORT: 8084
+      SPRING_PROFILES_ACTIVE: ${RESOURCEAPIGATEWAY_SPRING_PROFILE}
     depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.17.14
-    container_name: kibana
-    volumes:
-      - ./docker-config/elk/kibana.yml:/usr/share/kibana/config/kibana.yml
-      - ./docker-volumes/kibanadata:/var/lib/kibana/data
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: zipkin
-    ports:
-      - "9411:9411"
-    environment:
-      - STORAGE_TYPE=mem
-      - MYSQL_HOST=mysql
-      - ZIPKIN_LOG_LEVEL=DEBUG
-      - JAVA_OPTS=-Dlogging.level.zipkin=DEBUG
+      - keycloak-server
   keycloak-server:
     build: ./jwt-auth-server
     container_name: keycloak-server
     volumes:
       - ./jwt-auth-server/src/main/resources/mytest.jks:/app/src/main/resources/mytest.jks
+    networks:
+      - ${GLOBAL_NETWORK}
     ports:
       - "8086:8086"
     environment:

@@ -131,6 +131,8 @@ services:
     environment:
       SERVER_PORT: 8084
       SPRING_PROFILES_ACTIVE: ${RESOURCEAPIGATEWAY_SPRING_PROFILE}
+    depends_on:
+      - keycloak-server
   discovery-service:
     build: ./discovery-service
     volumes:

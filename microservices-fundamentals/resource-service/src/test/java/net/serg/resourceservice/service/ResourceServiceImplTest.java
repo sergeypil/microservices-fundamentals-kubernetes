@@ -6,21 +6,20 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import net.serg.resourceservice.client.RabbitMqSender;
 import net.serg.resourceservice.client.StorageClient;
+import net.serg.resourceservice.dto.StorageDto;
 import net.serg.resourceservice.repository.ResourceRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -28,10 +27,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 import java.util.Optional;
 import net.serg.resourceservice.entity.AudioLocation;
 
-@Disabled
 @ExtendWith(MockitoExtension.class)
 class ResourceServiceImplTest {
 
@@ -43,8 +42,6 @@ class ResourceServiceImplTest {
     private RabbitMqSender rabbitMQSender;
     @Mock 
     private S3Object s3Object;
-    @Mock 
-    private S3ObjectInputStream s3is;
     @Mock
     private StorageClient storageClient;
 
@@ -60,6 +57,20 @@ class ResourceServiceImplTest {
         metadata.setContentLength(file.getSize());
 
         when(resourceRepository.save(any())).thenReturn(AudioLocation.builder().id(1L).build());
+        when(storageClient.getStorages()).thenReturn(List.of(
+            StorageDto.builder()
+                .id(1L)
+                .type(StorageDto.StorageType.STAGING)
+                .bucket("staging-bucket")
+                .path("/files")
+                .build(),
+            StorageDto.builder()
+                .id(2L)
+                .type(StorageDto.StorageType.PERMANENT)
+                .bucket("permanent-bucket")
+                .path("/files")
+                .build()
+        ));
         
         // When
         service.saveAudio(file);
@@ -80,7 +91,7 @@ class ResourceServiceImplTest {
         String result = service.getAudioUrlById(1L);
 
         // Then
-        assertEquals("https://test.url", result);
+        assertThat(result).isEqualTo("https://s3.amazonaws.com/permanent/files/1");
         verify(resourceRepository).findById(any());
     }
 

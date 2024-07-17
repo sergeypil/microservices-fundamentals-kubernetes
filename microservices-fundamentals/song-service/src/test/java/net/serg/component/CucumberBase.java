@@ -8,6 +8,7 @@ import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -23,7 +24,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @CucumberContextConfiguration
 @AutoConfigureWebTestClient
 @Testcontainers
-@Disabled
+@ActiveProfiles("test")
 public class CucumberBase {
     @Container
     private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15-alpine");
